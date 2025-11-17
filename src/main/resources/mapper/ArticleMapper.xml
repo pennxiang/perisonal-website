@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shuiqingzheng.module.article.mapper.ArticleMapper">
+
+    <resultMap id="ArticleResultMap" type="com.shuiqingzheng.module.article.entity.Article">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="summary" column="summary"/>
+        <result property="content" column="content"/>
+        <result property="category" column="category"/>
+        <result property="tags" column="tags" typeHandler="com.shuiqingzheng.common.util.JsonTypeHandler"/>
+        <result property="publishDate" column="publish_date"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="viewCount" column="view_count"/>
+        <result property="status" column="status"/>
+    </resultMap>
+
+    <!-- 插入文章 -->
+    <insert id="insert" parameterType="Article" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO article (title, summary, content, category, tags, publish_date, update_date, view_count, status)
+        VALUES (#{title}, #{summary}, #{content}, #{category}, #{tags, typeHandler=com.shuiqingzheng.common.util.JsonTypeHandler},
+                #{publishDate}, #{updateDate}, 0, #{status})
+    </insert>
+
+    <!-- 更新文章 -->
+    <update id="update">
+        UPDATE article
+        SET title = #{title},
+            summary = #{summary},
+            content = #{content},
+            category = #{category},
+            tags = #{tags, typeHandler=com.shuiqingzheng.common.util.JsonTypeHandler},
+            update_date = #{updateDate},
+            status = #{status}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除文章 -->
+    <delete id="deleteById">
+        DELETE FROM article WHERE id = #{id}
+    </delete>
+
+    <!-- 根据ID查询 -->
+    <select id="selectById" resultMap="ArticleResultMap">
+        SELECT * FROM article WHERE id = #{id}
+    </select>
+
+    <!-- 分页查询 -->
+    <select id="selectPage" resultMap="ArticleResultMap">
+        SELECT * FROM article
+        <where>
+            <if test="category != null and category != ''">
+                AND category = #{category}
+            </if>
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND (title LIKE CONCAT('%', #{keyword}, '%') OR summary LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+        </where>
+        ORDER BY publish_date DESC
+        LIMIT #{offset}, #{size}
+    </select>
+
+    <!-- 查询总数 -->
+    <select id="countArticles" resultType="long">
+        SELECT COUNT(*) FROM article
+        <where>
+            <if test="category != null and category != ''">
+                AND category = #{category}
+            </if>
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND (title LIKE CONCAT('%', #{keyword}, '%') OR summary LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+        </where>
+    </select>
+
+    <!-- 查询最新文章 -->
+    <select id="selectLatest" resultMap="ArticleResultMap">
+        SELECT * FROM article WHERE status = 'published' ORDER BY publish_date DESC LIMIT 1
+    </select>
+
+    <!-- 按分类查询前N篇 -->
+    <select id="selectTopByCategory" resultMap="ArticleResultMap">
+        SELECT * FROM article
+        WHERE category = #{category} AND status = 'published'
+        ORDER BY publish_date DESC
+        LIMIT #{limit}
+    </select>
+
+    <!-- 增加浏览数 -->
+    <update id="incrementViewCount">
+        UPDATE article SET view_count = view_count + 1 WHERE id = #{id}
+    </update>
+
+    <!-- 搜索文章 -->
+    <select id="searchArticles" resultMap="ArticleResultMap">
+        SELECT * FROM article
+        WHERE status = 'published'
+        AND (title LIKE CONCAT('%', #{keyword}, '%')
+            OR summary LIKE CONCAT('%', #{keyword}, '%')
+            OR content LIKE CONCAT('%', #{keyword}, '%'))
+        ORDER BY publish_date DESC
+        LIMIT #{offset}, #{size}
+    </select>
+
+    <!-- 搜索文章总数 -->
+    <select id="countSearchArticles" resultType="long">
+        SELECT COUNT(*) FROM article
+        WHERE status = 'published'
+        AND (title LIKE CONCAT('%', #{keyword}, '%')
+            OR summary LIKE CONCAT('%', #{keyword}, '%')
+            OR content LIKE CONCAT('%', #{keyword}, '%'))
+    </select>
+
+</mapper>
