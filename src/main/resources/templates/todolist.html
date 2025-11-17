@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: common-head}"></head>
+<body>
+<div class="newspaper">
+    <nav th:replace="~{fragments/navigation :: navigation('todolist')}"></nav>
+    <header class="masthead">
+        <h1>待办事项</h1>
+        <div class="tagline">记录学习与工作计划</div>
+    </header>
+
+    <section style="max-width:900px;margin:0 auto;">
+        <div th:each="todo : ${todos}" style="margin-bottom:16px;padding:16px;background:#f8f9fa;border-left:4px solid #3498db;border-radius:4px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+                <div>
+                    <h3 th:text="${todo.title}" style="margin:0 0 8px 0;color:#2c3e50;">待办标题</h3>
+                    <div class="byline" th:text="'截止日期: ' + ${todo.deadline}">截止日期: 2024-12-01</div>
+                </div>
+                <div>
+                    <span th:text="${todo.status}"
+                          th:classappend="${todo.status == '已完成'} ? 'status-completed' : (${todo.status == '进行中'} ? 'status-in-progress' : 'status-pending')"
+                          style="padding:4px 12px;border-radius:12px;font-size:14px;font-weight:500;">状态</span>
+                    <span th:text="${todo.priority}"
+                          th:classappend="${todo.priority == '高'} ? 'priority-high' : (${todo.priority == '中'} ? 'priority-medium' : 'priority-low')"
+                          style="padding:4px 12px;border-radius:12px;font-size:14px;margin-left:8px;">优先级</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer th:replace="~{fragments/footer :: common-footer}"></footer>
+</div>
+
+<style>
+.status-completed { background: #d4edda; color: #155724; }
+.status-in-progress { background: #fff3cd; color: #856404; }
+.status-pending { background: #e2e3e5; color: #383d41; }
+.priority-high { background: #f8d7da; color: #721c24; }
+.priority-medium { background: #d1ecf1; color: #0c5460; }
+.priority-low { background: #d4edda; color: #155724; }
+</style>
+</body>
+</html>

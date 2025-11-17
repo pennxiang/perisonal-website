@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<body>
+<nav th:fragment="navigation(activePage)" class="navigation-bar">
+    <ul>
+        <li><a th:classappend="${activePage == 'home'} ? 'active' : ''" th:href="@{/}">首页</a></li>
+        <li><a th:classappend="${activePage == 'essay'} ? 'active' : ''" th:href="@{/essay}">杂谈</a></li>
+        <li><a th:classappend="${activePage == 'moment'} ? 'active' : ''" th:href="@{/moment}">瞬间</a></li>
+        <li><a th:classappend="${activePage == 'tech'} ? 'active' : ''" th:href="@{/tech}">技术</a></li>
+        <li><a th:classappend="${activePage == 'recommend'} ? 'active' : ''" th:href="@{/recommend}">推荐</a></li>
+        <li><a th:classappend="${activePage == 'todolist'} ? 'active' : ''" th:href="@{/todolist}">待办</a></li>
+        <li><a th:classappend="${activePage == 'category'} ? 'active' : ''" th:href="@{/category}">分类</a></li>
+        <li><a th:classappend="${activePage == 'tags'} ? 'active' : ''" th:href="@{/tags}">标签</a></li>
+        <li><a th:classappend="${activePage == 'search'} ? 'active' : ''" th:href="@{/search}">搜索</a></li>
+        <li><a th:classappend="${activePage == 'archive'} ? 'active' : ''" th:href="@{/archive}">归档</a></li>
+        <li><a th:classappend="${activePage == 'about'} ? 'active' : ''" th:href="@{/about}">关于</a></li>
+    </ul>
+</nav>
+</body>
+</html>

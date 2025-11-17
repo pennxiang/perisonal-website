@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: common-head}"></head>
+<body>
+<div class="newspaper">
+    <nav th:replace="~{fragments/navigation :: navigation('about')}"></nav>
+    <header class="masthead">
+        <h1>关于 Penn</h1>
+        <div class="tagline">后端开发者 · 记录代码与生活</div>
+    </header>
+
+    <section style="max-width:900px;margin:0 auto;">
+        <div style="display:flex;align-items:center;gap:16px;margin-bottom:18px;">
+            <span class="avatar"></span>
+            <div>
+                <div class="section-title" style="margin:0 0 8px;" th:text="${about.name}">Penn</div>
+                <div class="section-subtitle" th:text="${about.role}">后端开发 · Java / Spring · 喜欢记录</div>
+            </div>
+        </div>
+
+        <div class="section-title">技术栈</div>
+        <p th:text="${about.skills}">Java / Spring · MySQL · Redis · Kafka · Docker</p>
+
+        <div class="section-title">博客统计</div>
+        <p th:text="${stats.articleCount + ' 篇文章 · ' + stats.noteCount + ' 条技术笔记 · ' + stats.visitCount + ' 访问量 · ' + stats.persistDays + ' 天坚持'}">
+            42 篇文章 · 156 条技术笔记 · 2.5K 访问量 · 365 天坚持
+        </p>
+
+        <div class="section-title">写作与记录</div>
+        <p th:text="${about.description}">喜欢把遇到的问题写下来，把解决过程拆成可复用的小块。写作既是复盘，也是学习的反馈循环。</p>
+    </section>
+
+    <footer th:replace="~{fragments/footer :: common-footer}"></footer>
+</div>
+</body>
+</html>

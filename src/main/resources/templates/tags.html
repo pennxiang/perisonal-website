@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: common-head}"></head>
+<body>
+<div class="newspaper">
+    <nav th:replace="~{fragments/navigation :: navigation('tags')}"></nav>
+    <header class="masthead">
+        <h1>标签</h1>
+        <div class="tagline">按标签浏览文章</div>
+    </header>
+
+    <section style="max-width:900px;margin:0 auto;">
+        <div style="margin-bottom:24px;">
+            <span th:each="tag : ${allTags}" style="margin:4px 8px;display:inline-block;">
+                <a th:href="@{/tags/{tag}(tag=${tag.name})}" th:text="'#' + ${tag.name} + ' (' + ${tag.count} + ')'"
+                   style="text-decoration:none;color:#3498db;font-weight:500;">#标签名 (5)</a>
+            </span>
+        </div>
+
+        <div th:if="${selectedTag != null}">
+            <h2 th:text="'标签: #' + ${selectedTag}">标签: #Java</h2>
+            <div class="article-row">
+                <article class="article" th:each="article : ${articles}">
+                    <h3><a th:href="@{/article/{id}(id=${article.id})}" th:text="${article.title}">文章标题</a></h3>
+                    <div class="byline" th:text="${article.publishDate}">2024-11-15</div>
+                    <p th:text="${article.summary}">文章简介</p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <footer th:replace="~{fragments/footer :: common-footer}"></footer>
+</div>
+</body>
+</html>

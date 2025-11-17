@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: common-head}"></head>
+<body>
+<div class="newspaper">
+    <nav th:replace="~{fragments/navigation :: navigation('archive')}"></nav>
+    <header class="masthead">
+        <h1>归档</h1>
+        <div class="tagline">按时间浏览所有文章</div>
+    </header>
+
+    <section style="max-width:900px;margin:0 auto;">
+        <div th:each="yearGroup : ${archivesByYear}">
+            <h2 th:text="${yearGroup.year}">2024</h2>
+            <div th:each="monthGroup : ${yearGroup.months}">
+                <h3 th:text="${monthGroup.month + '月'}">11月</h3>
+                <ul style="list-style:none;padding:0;">
+                    <li th:each="article : ${monthGroup.articles}" style="margin-bottom:12px;">
+                        <span class="byline" th:text="${article.publishDate}">2024-11-15</span>
+                        <a th:href="@{/article/{id}(id=${article.id})}" th:text="${article.title}">文章标题</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <footer th:replace="~{fragments/footer :: common-footer}"></footer>
+</div>
+</body>
+</html>

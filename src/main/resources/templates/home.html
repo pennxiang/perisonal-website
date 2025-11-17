@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: common-head}"></head>
+<body>
+<div class="newspaper">
+    <nav th:replace="~{fragments/navigation :: navigation('home')}"></nav>
+
+    <header class="masthead">
+        <h1>Penn 的生活日报</h1>
+        <div class="tagline">记录后端技术 · 记录生活点滴</div>
+    </header>
+
+    <section class="latest-hero">
+        <div class="category">
+            <h3>最新</h3>
+        </div>
+        <h2 th:text="${latestArticle != null ? latestArticle.title : '深入学习 Java 后端的一周总结'}">深入学习 Java 后端的一周总结</h2>
+        <div class="byline" th:text="${latestArticle != null ? latestArticle.publishDate : '2024年11月14日'}">2024年11月14日</div>
+        <p><span class="dropcap">这</span><span th:text="${latestArticle != null ? latestArticle.summary : '一周聚焦 Redis 与 MySQL，从持久化到索引调优，把常见误区写成 checklist 并落地到项目。'}">一周聚焦 Redis 与 MySQL，从持久化到索引调优，把常见误区写成 checklist 并落地到项目。</span></p>
+        <div class="card-footer">
+            <a class="read-more" th:href="@{/article/{id}(id=${latestArticle != null ? latestArticle.id : 1})}">查看全文 →</a>
+        </div>
+    </section>
+
+    <main class="home-columns">
+        <section class="column-block">
+            <h2>杂谈</h2>
+            <article class="article" th:each="essay : ${essays}">
+                <h3 th:text="${essay.title}">周末的咖啡时光</h3>
+                <div class="byline" th:text="${essay.publishDate}">2024年11月14日</div>
+                <p th:text="${essay.summary}">看着咖啡师调温、称豆、控水，像极了调优服务：都是对细节的执念。</p>
+                <div class="card-footer">
+                    <a class="read-more" th:href="@{/article/{id}(id=${essay.id})}">查看全文 →</a>
+                </div>
+            </article>
+        </section>
+
+        <section class="column-block">
+            <h2>技术</h2>
+            <article class="article" th:each="tech : ${techArticles}">
+                <h3 th:text="${tech.title}">深入学习 Java 后端的一周总结</h3>
+                <div class="byline" th:text="${tech.publishDate}">2024年11月15日</div>
+                <p th:text="${tech.summary}">聚焦 Redis 与 MySQL，从持久化到索引调优，收获性能与认知的双升级。</p>
+                <div class="card-footer">
+                    <a class="read-more" th:href="@{/article/{id}(id=${tech.id})}">查看全文 →</a>
+                </div>
+            </article>
+        </section>
+
+        <section class="column-block">
+            <h3>瞬间</h3>
+            <article class="article" th:each="moment : ${moments}">
+                <h2 th:text="${moment.title}">Bug 终于解决了</h2>
+                <div class="byline" th:text="${moment.publishDate}">2024年11月14日 22:15</div>
+                <p th:text="${moment.content}">原来是 Redis TTL 序列化字段遗漏，修好那刻和平常的晚风一样轻盈。</p>
+                <div class="card-footer">
+                    <a class="read-more" th:href="@{/moment/{id}(id=${moment.id})}">查看全文 →</a>
+                </div>
+            </article>
+        </section>
+    </main>
+
+    <footer th:replace="~{fragments/footer :: common-footer}"></footer>
+</div>
+</body>
+</html>

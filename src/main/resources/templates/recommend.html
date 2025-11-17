@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: common-head}"></head>
+<body>
+<div class="newspaper">
+    <nav th:replace="~{fragments/navigation :: navigation('recommend')}"></nav>
+    <header class="masthead">
+        <h1>推荐</h1>
+        <div class="tagline">我的动漫、电影与书单</div>
+    </header>
+
+    <section style="max-width:1200px;margin:0 auto;">
+        <div style="text-align:center;margin-bottom:24px;">
+            <a class="primary-btn" th:href="@{/recommend/anime}" style="margin:0 8px;">动漫</a>
+            <a class="primary-btn" th:href="@{/recommend/movie}" style="margin:0 8px;">电影</a>
+            <a class="primary-btn" th:href="@{/recommend/book}" style="margin:0 8px;">书单</a>
+        </div>
+
+        <div th:if="${recommendType == 'anime'}">
+            <h2>动漫推荐</h2>
+            <div class="article-row">
+                <article class="article" th:each="anime : ${animes}">
+                    <h3 th:text="${anime.title}">动漫标题</h3>
+                    <div class="byline" th:text="'类型: ' + ${anime.genre} + ' | 评分: ' + ${anime.rating}">类型: 热血 | 评分: 9.5</div>
+                    <p th:text="${anime.description}">动漫简介</p>
+                </article>
+            </div>
+        </div>
+
+        <div th:if="${recommendType == 'movie'}">
+            <h2>电影推荐</h2>
+            <div class="article-row">
+                <article class="article" th:each="movie : ${movies}">
+                    <h3 th:text="${movie.title}">电影标题</h3>
+                    <div class="byline" th:text="'导演: ' + ${movie.director} + ' | 年份: ' + ${movie.year} + ' | 评分: ' + ${movie.rating}">导演: XX | 年份: 2020 | 评分: 9.0</div>
+                    <p th:text="${movie.description}">电影简介</p>
+                </article>
+            </div>
+        </div>
+
+        <div th:if="${recommendType == 'book'}">
+            <h2>书单推荐</h2>
+            <div class="article-row">
+                <article class="article" th:each="book : ${books}">
+                    <h3 th:text="${book.title}">书籍标题</h3>
+                    <div class="byline" th:text="'作者: ' + ${book.author} + ' | 出版: ' + ${book.publishYear} + ' | 评分: ' + ${book.rating}">作者: XX | 出版: 2020 | 评分: 9.0</div>
+                    <p th:text="${book.description}">书籍简介</p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <footer th:replace="~{fragments/footer :: common-footer}"></footer>
+</div>
+</body>
+</html>

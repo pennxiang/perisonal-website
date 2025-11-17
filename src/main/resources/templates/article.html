@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: common-head}"></head>
+<body>
+<div class="newspaper">
+    <header class="masthead">
+        <h1 th:text="${article.title}">MySQL 索引优化实践</h1>
+        <div class="tagline" th:text="${article.publishDate + ' · ' + article.category + ' · Penn'}">2024年11月12日 · 技术 · Penn</div>
+    </header>
+
+    <div class="section-subtitle" style="margin:0 0 14px 0;" th:if="${article.tags != null and !article.tags.isEmpty()}">
+        <span th:each="tag : ${article.tags}" th:text="'#' + ${tag} + ' '"></span>
+    </div>
+
+    <section th:utext="${article.content}">
+        <!-- 文章内容将在这里渲染 -->
+    </section>
+
+    <div style="margin-top:24px;display:flex;gap:12px;flex-wrap:wrap;justify-content:flex-start;">
+        <a class="primary-btn" th:href="@{/{category}(category=${article.category})}" th:text="'← 返回' + ${article.category} + '列表'">← 返回技术列表</a>
+    </div>
+
+    <footer th:replace="~{fragments/footer :: common-footer}"></footer>
+</div>
+</body>
+</html>

@@ -1,37 +1,7 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>待办清单 - Penn 的生活日报</title>
-    <link rel="stylesheet" href="style.css">
-</head>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <body>
-<div class="newspaper">
-    <nav class="navigation-bar">
-        <ul>
-            <li><a href="home.html">首页</a></li>
-            <li><a href="essay.html">杂谈</a></li>
-            <li><a href="moment.html">瞬间</a></li>
-            <li><a href="tech.html">技术</a></li>
-            <li><a href="recommend.html">推荐</a></li>
-            <li><a class="active" href="todolist.html">待办</a></li>
-            <li><a href="category.html">分类</a></li>
-            <li><a href="tags.html">标签</a></li>
-            <li><a href="search.html">搜索</a></li>
-            <li><a href="archive.html">归档</a></li>
-            <li><a href="about.html">关于</a></li>
-        </ul>
-    </nav>
-    <header class="masthead">
-        <h1>待办清单</h1>
-        <div class="tagline">当前在做与计划中的事情</div>
-    </header>
-
-    <main class="article-row" id="todo-list"></main>
-</div>
-
-<footer class="footer">
+<footer th:fragment="common-footer" class="footer">
     <p>Penn 的生活日报 | 后端与生活的日常记录</p>
     <p>blog@penn.dev · 每周五更新</p>
     <div class="social-links">
@@ -52,32 +22,5 @@
         </a>
     </div>
 </footer>
-
-<script>
-    const todos = {
-        '进行中': [
-            '[ ] 整理 MySQL 索引 checklist',
-            '[ ] 阅读 Effective Java 条目复习',
-            '[ ] 健身：每周三次跑步'
-        ],
-        '计划': [
-            '[ ] Kafka 回溯方案评估',
-            '[ ] 写一篇 Redis 持久化笔记'
-        ]
-    };
-
-    const listEl = document.getElementById('todo-list');
-    Object.entries(todos).forEach(([status, items]) => {
-        items.forEach(text => {
-            const el = document.createElement('article');
-            el.className = 'article';
-            el.innerHTML = `
-                <h2>${text}</h2>
-                <div class="byline">${status}</div>
-            `;
-            listEl.appendChild(el);
-        });
-    });
-</script>
 </body>
 </html>

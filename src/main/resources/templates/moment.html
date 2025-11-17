@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: common-head}"></head>
+<body>
+<div class="newspaper">
+    <nav th:replace="~{fragments/navigation :: navigation('moment')}"></nav>
+    <header class="masthead">
+        <h1>瞬间</h1>
+        <div class="tagline">记录灵感与思考的片刻</div>
+    </header>
+
+    <main class="article-row">
+        <article class="article" th:each="moment : ${moments}">
+            <h2 th:text="${moment.title}">瞬间标题</h2>
+            <div class="byline" th:text="${moment.publishDate}">2024-11-15 18:30</div>
+            <p th:text="${moment.content}">瞬间内容</p>
+            <div class="card-footer"><a class="read-more" th:href="@{/moment/{id}(id=${moment.id})}">查看详情 →</a></div>
+        </article>
+    </main>
+
+    <div class="pager-bar" th:if="${totalPages > 1}">
+        <span class="pager-link" th:if="${currentPage > 1}">
+            <a th:href="@{/moment(page=${currentPage - 1})}">上一页</a>
+        </span>
+        <span class="pager-link" th:each="i : ${#numbers.sequence(1, totalPages)}"
+              th:classappend="${i == currentPage} ? 'active' : ''">
+            <a th:href="@{/moment(page=${i})}" th:text="${i}">1</a>
+        </span>
+        <span class="pager-link" th:if="${currentPage < totalPages}">
+            <a th:href="@{/moment(page=${currentPage + 1})}">下一页</a>
+        </span>
+    </div>
+
+    <footer th:replace="~{fragments/footer :: common-footer}"></footer>
+</div>
+</body>
+</html>

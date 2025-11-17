@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: common-head}"></head>
+<body>
+<div class="newspaper">
+    <nav th:replace="~{fragments/navigation :: navigation('essay')}"></nav>
+    <header class="masthead">
+        <h1>杂谈</h1>
+        <div class="tagline">平日里的想法与记录</div>
+    </header>
+
+    <main class="article-row" id="grid">
+        <article class="article" th:each="essay : ${essays}">
+            <h2><a th:href="@{/article/{id}(id=${essay.id})}" style="text-decoration:none;color:inherit" th:text="${essay.title}">杂谈标题</a></h2>
+            <div class="byline" th:text="${essay.publishDate}">2024-11-15</div>
+            <p th:text="${essay.summary}">这一段用于展示列表卡片的简介段落，用来记录日常思考。</p>
+            <div class="card-footer"><a class="read-more" th:href="@{/article/{id}(id=${essay.id})}">查看全文 →</a></div>
+        </article>
+    </main>
+
+    <!-- 分页组件 -->
+    <div class="pager-bar" th:if="${totalPages > 1}">
+        <span class="pager-link" th:if="${currentPage > 1}">
+            <a th:href="@{/essay(page=${currentPage - 1})}">上一页</a>
+        </span>
+        <span class="pager-link" th:each="i : ${#numbers.sequence(1, totalPages)}"
+              th:classappend="${i == currentPage} ? 'active' : ''">
+            <a th:href="@{/essay(page=${i})}" th:text="${i}">1</a>
+        </span>
+        <span class="pager-link" th:if="${currentPage < totalPages}">
+            <a th:href="@{/essay(page=${currentPage + 1})}">下一页</a>
+        </span>
+    </div>
+
+    <footer th:replace="~{fragments/footer :: common-footer}"></footer>
+</div>
+</body>
+</html>

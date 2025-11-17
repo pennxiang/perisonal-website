@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: common-head}"></head>
+<body>
+<div class="newspaper">
+    <nav th:replace="~{fragments/navigation :: navigation('search')}"></nav>
+    <header class="masthead">
+        <h1>搜索</h1>
+        <div class="tagline">搜索文章内容</div>
+    </header>
+
+    <section style="max-width:900px;margin:0 auto;">
+        <form th:action="@{/search}" method="get" style="margin-bottom:24px;">
+            <input type="text" name="q" th:value="${query}" placeholder="输入关键词搜索..."
+                   style="width:100%;padding:12px;font-size:16px;border:1px solid #ddd;border-radius:4px;">
+            <button type="submit" style="margin-top:12px;padding:12px 24px;background:#3498db;color:white;border:none;border-radius:4px;cursor:pointer;">搜索</button>
+        </form>
+
+        <div th:if="${query != null and !query.isEmpty()}">
+            <p th:text="'搜索 &quot;' + ${query} + '&quot; 找到 ' + ${totalResults} + ' 个结果'">搜索结果</p>
+
+            <div class="article-row" th:if="${results != null and !results.isEmpty()}">
+                <article class="article" th:each="result : ${results}">
+                    <h3><a th:href="@{/article/{id}(id=${result.id})}" th:text="${result.title}">文章标题</a></h3>
+                    <div class="byline" th:text="${result.publishDate}">2024-11-15</div>
+                    <p th:text="${result.summary}">文章简介</p>
+                </article>
+            </div>
+
+            <p th:if="${results == null or results.isEmpty()}" style="text-align:center;color:#999;margin-top:48px;">
+                未找到相关结果
+            </p>
+        </div>
+    </section>
+
+    <footer th:replace="~{fragments/footer :: common-footer}"></footer>
+</div>
+</body>
+</html>
