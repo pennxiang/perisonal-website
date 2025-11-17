@@ -1,0 +1,1918 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Penn的生活日报 - 后台管理</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        /* 顶部导航栏 */
+        .navbar {
+            background: #2c3e50;
+            color: white;
+            padding: 0 2rem;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar-brand {
+            font-size: 1.3rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .navbar-user {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #3498db;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* 主容器 */
+        .container {
+            display: flex;
+            min-height: calc(100vh - 60px);
+        }
+
+        /* 侧边栏 */
+        .sidebar {
+            width: 240px;
+            background: white;
+            border-right: 1px solid #e0e0e0;
+            padding: 1.5rem 0;
+        }
+
+        .menu-item {
+            padding: 0.8rem 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            color: #555;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .menu-item:hover {
+            background: #f8f9fa;
+            color: #2c3e50;
+        }
+
+        .menu-item.active {
+            background: #e8f4f8;
+            color: #3498db;
+            border-left-color: #3498db;
+            font-weight: 500;
+        }
+
+        .menu-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 主内容区 */
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        /* 页面标题 */
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: #7f8c8d;
+            font-size: 0.95rem;
+        }
+
+        /* 卡片样式 */
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        /* 按钮 */
+        .btn {
+            padding: 0.6rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #229954;
+        }
+
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+
+        /* 表单 */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.7rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.95rem;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        textarea.form-input {
+            min-height: 120px;
+            resize: vertical;
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+
+        /* 文件上传区域 */
+        .upload-area {
+            border: 2px dashed #3498db;
+            border-radius: 8px;
+            padding: 3rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #f8f9fa;
+        }
+
+        .upload-area:hover {
+            border-color: #2980b9;
+            background: #e8f4f8;
+        }
+
+        .upload-area.dragover {
+            background: #d4e6f1;
+            border-color: #2980b9;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: #3498db;
+            margin-bottom: 1rem;
+        }
+
+        /* 文章列表 */
+        .article-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .article-item {
+            background: #f8f9fa;
+            padding: 1.2rem;
+            border-radius: 6px;
+            border-left: 4px solid #3498db;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+        }
+
+        .article-item:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transform: translateX(5px);
+        }
+
+        .article-info h3 {
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .article-meta {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .article-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .article-actions .btn {
+            padding: 0.4rem 1rem;
+            font-size: 0.85rem;
+        }
+
+        /* 状态标签 */
+        .status-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .status-published {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-draft {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        /* 统计卡片 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .stat-card.blue {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        }
+
+        .stat-card.green {
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+        }
+
+        .stat-card.orange {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: bold;
+        }
+
+        /* 第三方账号绑定 */
+        .account-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .account-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.2s;
+        }
+
+        .account-card:hover {
+            border-color: #3498db;
+            box-shadow: 0 2px 8px rgba(52, 152, 219, 0.2);
+        }
+
+        .account-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .account-icon.github {
+            background: #24292e;
+            color: white;
+        }
+
+        .account-icon.google {
+            background: #ea4335;
+            color: white;
+        }
+
+        .account-icon.wechat {
+            background: #07c160;
+            color: white;
+        }
+
+        .account-icon.qq {
+            background: #1296db;
+            color: white;
+        }
+
+        .account-info {
+            flex: 1;
+        }
+
+        .account-name {
+            font-weight: 500;
+            color: #2c3e50;
+            margin-bottom: 0.3rem;
+        }
+
+        .account-status {
+            font-size: 0.85rem;
+            color: #7f8c8d;
+        }
+
+        .account-status.connected {
+            color: #27ae60;
+        }
+
+        /* Markdown编辑器工具栏 */
+        .editor-toolbar {
+            background: #f8f9fa;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            border-radius: 4px 4px 0 0;
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .editor-btn {
+            padding: 0.4rem 0.8rem;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .editor-btn:hover {
+            background: #e9ecef;
+        }
+
+        /* 瞬间列表 */
+        .moment-item {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            border-left: 3px solid #3498db;
+        }
+
+        .moment-content {
+            color: #2c3e50;
+            margin-bottom: 0.8rem;
+            line-height: 1.6;
+        }
+
+        .moment-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #7f8c8d;
+            font-size: 0.85rem;
+        }
+
+        /* 分页组件 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+        }
+
+        .pagination button {
+            padding: 0.5rem 1rem;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .pagination button:hover:not(:disabled) {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pagination .page-info {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        /* IP列表 */
+        .ip-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 6px;
+            margin-bottom: 0.8rem;
+        }
+
+        .ip-info {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .ip-address {
+            font-family: 'Consolas', monospace;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        .ip-location {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        .ip-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* 标签输入 */
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .tag-item {
+            background: #e8f4f8;
+            color: #3498db;
+            padding: 0.3rem 0.8rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tag-remove {
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* 推荐项目卡片 */
+        .recommend-item {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.2rem;
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 1.5rem;
+            border: 1px solid #e0e0e0;
+        }
+
+        .recommend-cover {
+            width: 120px;
+            height: 160px;
+            background: #ddd;
+            border-radius: 6px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 0.85rem;
+        }
+
+        .recommend-info {
+            flex: 1;
+        }
+
+        .recommend-title {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .recommend-meta {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .recommend-desc {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        /* Tab切换 */
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            border-bottom: 2px solid #e0e0e0;
+            margin-bottom: 1.5rem;
+        }
+
+        .tab-item {
+            padding: 0.8rem 1.5rem;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+            color: #7f8c8d;
+        }
+
+        .tab-item:hover {
+            color: #2c3e50;
+        }
+
+        .tab-item.active {
+            color: #3498db;
+            border-bottom-color: #3498db;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* 上传成功提示 */
+        .upload-success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .upload-success.show {
+            display: block;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                left: -240px;
+                top: 60px;
+                height: calc(100vh - 60px);
+                z-index: 99;
+                transition: left 0.3s;
+            }
+
+            .sidebar.mobile-open {
+                left: 0;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .recommend-item {
+                flex-direction: column;
+            }
+
+            .recommend-cover {
+                width: 100%;
+                height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- 顶部导航栏 -->
+<div class="navbar">
+    <div class="navbar-brand">
+        <span>📰</span>
+        <span>Penn的生活日报 - 管理后台</span>
+    </div>
+    <div class="navbar-user">
+        <span>Penn</span>
+        <div class="user-avatar">P</div>
+    </div>
+</div>
+
+<div class="container">
+    <!-- 侧边栏 -->
+    <div class="sidebar">
+        <div class="menu-item active" data-section="dashboard">
+            <div class="menu-icon">📊</div>
+            <span>数据概览</span>
+        </div>
+        <div class="menu-item" data-section="upload">
+            <div class="menu-icon">📤</div>
+            <span>文章上传</span>
+        </div>
+        <div class="menu-item" data-section="articles">
+            <div class="menu-icon">📝</div>
+            <span>文章管理</span>
+        </div>
+        <div class="menu-item" data-section="moments">
+            <div class="menu-icon">⚡</div>
+            <span>瞬间管理</span>
+        </div>
+        <div class="menu-item" data-section="recommend">
+            <div class="menu-icon">⭐</div>
+            <span>推荐管理</span>
+        </div>
+        <div class="menu-item" data-section="todo">
+            <div class="menu-icon">✅</div>
+            <span>待办编辑</span>
+        </div>
+        <div class="menu-item" data-section="about">
+            <div class="menu-icon">👤</div>
+            <span>关于编辑</span>
+        </div>
+        <div class="menu-item" data-section="ip">
+            <div class="menu-icon">🌐</div>
+            <span>IP管理</span>
+        </div>
+        <div class="menu-item" data-section="accounts">
+            <div class="menu-icon">🔗</div>
+            <span>账号绑定</span>
+        </div>
+    </div>
+
+    <!-- 主内容区 -->
+    <div class="main-content">
+        <!-- 数据概览 -->
+        <div class="content-section active" id="dashboard">
+            <div class="page-header">
+                <h1 class="page-title">数据概览</h1>
+                <p class="page-subtitle">网站核心数据统计</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card blue">
+                    <div class="stat-label">总文章数</div>
+                    <div class="stat-value">128</div>
+                </div>
+                <div class="stat-card green">
+                    <div class="stat-label">总访问量</div>
+                    <div class="stat-value">15,234</div>
+                </div>
+                <div class="stat-card orange">
+                    <div class="stat-label">今日访问</div>
+                    <div class="stat-value">342</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">瞬间数量</div>
+                    <div class="stat-value">89</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">近期访问趋势</h2>
+                <div style="padding: 2rem; text-align: center; color: #7f8c8d;">
+                    <p>📈 图表展示区域</p>
+                    <p style="font-size: 0.9rem; margin-top: 0.5rem;">可接入 ECharts 或 Chart.js 进行可视化展示</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">热门文章 Top 5</h2>
+                <div class="article-list">
+                    <div class="article-item">
+                        <div class="article-info">
+                            <h3>深入理解 Java 线程池原理</h3>
+                            <div class="article-meta">
+                                <span>👁 1,234 次浏览</span>
+                                <span>2024-11-10</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="article-item">
+                        <div class="article-info">
+                            <h3>Redis 持久化机制详解</h3>
+                            <div class="article-meta">
+                                <span>👁 987 次浏览</span>
+                                <span>2024-11-08</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 文章上传 -->
+        <div class="content-section" id="upload">
+            <div class="page-header">
+                <h1 class="page-title">上传新文章</h1>
+                <p class="page-subtitle">支持 Markdown 格式文件上传</p>
+            </div>
+
+            <div class="upload-success" id="uploadSuccess">
+                <strong>✅ 文件上传成功！</strong>
+                <p style="margin-top: 0.5rem; font-size: 0.9rem;">文件名: <span id="uploadedFileName"></span> | 大小: <span id="uploadedFileSize"></span></p>
+            </div>
+
+            <div class="card">
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">📄</div>
+                    <h3>拖拽 Markdown 文件到此处</h3>
+                    <p style="color: #7f8c8d; margin-top: 0.5rem;">或点击选择文件</p>
+                    <input type="file" id="fileInput" accept=".md,.markdown" style="display: none;">
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                    <button type="button" class="btn btn-success" onclick="publishArticle()">
+                        ✅ 立即发布
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="saveDraft()">
+                        💾 保存草稿
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 文章管理 -->
+        <div class="content-section" id="articles">
+            <div class="page-header">
+                <h1 class="page-title">文章管理</h1>
+                <p class="page-subtitle">管理所有已发布和草稿文章</p>
+            </div>
+
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <input type="text" class="form-input" placeholder="🔍 搜索文章..." style="width: 300px;">
+                    <select class="form-input" style="width: 150px;">
+                        <option>全部状态</option>
+                        <option>已发布</option>
+                        <option>草稿</option>
+                    </select>
+                </div>
+
+                <div class="article-list" id="articleList">
+                    <!-- 示例数据 - 实际使用时通过JS动态生成 -->
+                    <div class="article-item">
+                        <div class="article-info">
+                            <h3>深入理解 Java 线程池原理</h3>
+                            <div class="article-meta">
+                                <span class="status-badge status-published">已发布</span>
+                                <span>分类: 技术学习</span>
+                                <span>2024-11-10 14:30</span>
+                            </div>
+                        </div>
+                        <div class="article-actions">
+                            <button class="btn btn-primary">✏️ 编辑</button>
+                            <button class="btn btn-warning">👁 预览</button>
+                            <button class="btn btn-danger">🗑️ 删除</button>
+                        </div>
+                    </div>
+
+                    <div class="article-item">
+                        <div class="article-info">
+                            <h3>Redis 持久化机制详解</h3>
+                            <div class="article-meta">
+                                <span class="status-badge status-published">已发布</span>
+                                <span>分类: 技术学习</span>
+                                <span>2024-11-08 09:15</span>
+                            </div>
+                        </div>
+                        <div class="article-actions">
+                            <button class="btn btn-primary">✏️ 编辑</button>
+                            <button class="btn btn-warning">👁 预览</button>
+                            <button class="btn btn-danger">🗑️ 删除</button>
+                        </div>
+                    </div>
+
+                    <div class="article-item">
+                        <div class="article-info">
+                            <h3>Kafka 消息队列实践总结</h3>
+                            <div class="article-meta">
+                                <span class="status-badge status-draft">草稿</span>
+                                <span>分类: 项目实践</span>
+                                <span>2024-11-05 16:45</span>
+                            </div>
+                        </div>
+                        <div class="article-actions">
+                            <button class="btn btn-primary">✏️ 编辑</button>
+                            <button class="btn btn-success">📢 发布</button>
+                            <button class="btn btn-danger">🗑️ 删除</button>
+                        </div>
+                    </div>
+
+                    <div class="article-item">
+                        <div class="article-info">
+                            <h3>MySQL 索引优化实战</h3>
+                            <div class="article-meta">
+                                <span class="status-badge status-published">已发布</span>
+                                <span>分类: 技术学习</span>
+                                <span>2024-11-03 10:20</span>
+                            </div>
+                        </div>
+                        <div class="article-actions">
+                            <button class="btn btn-primary">✏️ 编辑</button>
+                            <button class="btn btn-warning">👁 预览</button>
+                            <button class="btn btn-danger">🗑️ 删除</button>
+                        </div>
+                    </div>
+
+                    <div class="article-item">
+                        <div class="article-info">
+                            <h3>Docker 容器化部署指南</h3>
+                            <div class="article-meta">
+                                <span class="status-badge status-published">已发布</span>
+                                <span>分类: 项目实践</span>
+                                <span>2024-11-01 15:30</span>
+                            </div>
+                        </div>
+                        <div class="article-actions">
+                            <button class="btn btn-primary">✏️ 编辑</button>
+                            <button class="btn btn-warning">👁 预览</button>
+                            <button class="btn btn-danger">🗑️ 删除</button>
+                        </div>
+                    </div>
+
+                    <div class="article-item">
+                        <div class="article-info">
+                            <h3>分布式事务解决方案</h3>
+                            <div class="article-meta">
+                                <span class="status-badge status-draft">草稿</span>
+                                <span>分类: 技术学习</span>
+                                <span>2024-10-28 11:45</span>
+                            </div>
+                        </div>
+                        <div class="article-actions">
+                            <button class="btn btn-primary">✏️ 编辑</button>
+                            <button class="btn btn-success">📢 发布</button>
+                            <button class="btn btn-danger">🗑️ 删除</button>
+                        </div>
+                    </div>
+
+                    <div class="article-item">
+                        <div class="article-info">
+                            <h3>Spring Cloud 微服务架构实践</h3>
+                            <div class="article-meta">
+                                <span class="status-badge status-published">已发布</span>
+                                <span>分类: 技术学习</span>
+                                <span>2024-10-25 13:20</span>
+                            </div>
+                        </div>
+                        <div class="article-actions">
+                            <button class="btn btn-primary">✏️ 编辑</button>
+                            <button class="btn btn-warning">👁 预览</button>
+                            <button class="btn btn-danger">🗑️ 删除</button>
+                        </div>
+                    </div>
+
+                    <div class="article-item">
+                        <div class="article-info">
+                            <h3>JVM 性能调优心得</h3>
+                            <div class="article-meta">
+                                <span class="status-badge status-published">已发布</span>
+                                <span>分类: 技术学习</span>
+                                <span>2024-10-22 09:00</span>
+                            </div>
+                        </div>
+                        <div class="article-actions">
+                            <button class="btn btn-primary">✏️ 编辑</button>
+                            <button class="btn btn-warning">👁 预览</button>
+                            <button class="btn btn-danger">🗑️ 删除</button>
+                        </div>
+                    </div>
+
+                    <div class="article-item">
+                        <div class="article-info">
+                            <h3>Netty 网络编程入门</h3>
+                            <div class="article-meta">
+                                <span class="status-badge status-published">已发布</span>
+                                <span>分类: 技术学习</span>
+                                <span>2024-10-20 16:15</span>
+                            </div>
+                        </div>
+                        <div class="article-actions">
+                            <button class="btn btn-primary">✏️ 编辑</button>
+                            <button class="btn btn-warning">👁 预览</button>
+                            <button class="btn btn-danger">🗑️ 删除</button>
+                        </div>
+                    </div>
+
+                    <div class="article-item">
+                        <div class="article-info">
+                            <h3>设计模式在实际开发中的应用</h3>
+                            <div class="article-meta">
+                                <span class="status-badge status-published">已发布</span>
+                                <span>分类: 技术学习</span>
+                                <span>2024-10-18 14:40</span>
+                            </div>
+                        </div>
+                        <div class="article-actions">
+                            <button class="btn btn-primary">✏️ 编辑</button>
+                            <button class="btn btn-warning">👁 预览</button>
+                            <button class="btn btn-danger">🗑️ 删除</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 分页组件 -->
+                <div class="pagination">
+                    <button onclick="changePage('articles', 'prev')" id="articlesPrevBtn">上一页</button>
+                    <span class="page-info">第 <span id="articlesCurrentPage">1</span> 页，共 <span id="articlesTotalPages">13</span> 页</span>
+                    <button onclick="changePage('articles', 'next')" id="articlesNextBtn">下一页</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 瞬间管理 -->
+        <div class="content-section" id="moments">
+            <div class="page-header">
+                <h1 class="page-title">瞬间管理</h1>
+                <p class="page-subtitle">记录生活中的片刻灵感</p>
+            </div>
+
+            <!-- Tab切换 -->
+            <div class="tabs">
+                <div class="tab-item active" data-tab="publish-moment">📝 发布瞬间</div>
+                <div class="tab-item" data-tab="manage-moment">📋 管理瞬间</div>
+            </div>
+
+            <!-- 发布瞬间 -->
+            <div class="tab-content active" id="publish-moment">
+                <div class="card">
+                    <form>
+                        <div class="form-group">
+                            <label class="form-label">内容</label>
+                            <textarea class="form-input" placeholder="分享此刻的想法..." style="min-height: 120px;" id="momentContent"></textarea>
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="publishMoment()">
+                            ⚡ 发布瞬间
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- 管理瞬间 -->
+            <div class="tab-content" id="manage-moment">
+                <div class="card">
+                    <div style="margin-bottom: 1.5rem;">
+                        <input type="text" class="form-input" placeholder="🔍 搜索瞬间内容..." style="width: 100%; max-width: 400px;">
+                    </div>
+
+                    <div id="momentList">
+                        <div class="moment-item">
+                            <div class="moment-content">
+                                今天深入研究了 Redis 的跳表实现，原来有序集合的底层数据结构这么精妙！通过空间换时间的思想，实现了 O(logN) 的查找效率。
+                            </div>
+                            <div class="moment-footer">
+                                <span>2024-11-16 10:30</span>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn btn-primary" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">✏️ 编辑</button>
+                                    <button class="btn btn-danger" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">🗑️ 删除</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="moment-item">
+                            <div class="moment-content">
+                                开始准备毕业设计了，在高性能缓存系统、RAG问答系统和API测试平台之间纠结。感觉缓存系统能更好地展示对 JDK 底层的理解。
+                            </div>
+                            <div class="moment-footer">
+                                <span>2024-11-15 18:20</span>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn btn-primary" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">✏️ 编辑</button>
+                                    <button class="btn btn-danger" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">🗑️ 删除</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="moment-item">
+                            <div class="moment-content">
+                                重新设计了博客的布局，报纸风格的设计真的很有质感！分栏式布局让内容层次更加清晰。
+                            </div>
+                            <div class="moment-footer">
+                                <span>2024-11-14 21:15</span>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn btn-primary" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">✏️ 编辑</button>
+                                    <button class="btn btn-danger" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">🗑️ 删除</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="moment-item">
+                            <div class="moment-content">
+                                学习了 DDD 领域驱动设计，对如何划分限界上下文有了新的理解。准备重构 RAG 系统的代码架构。
+                            </div>
+                            <div class="moment-footer">
+                                <span>2024-11-13 14:50</span>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn btn-primary" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">✏️ 编辑</button>
+                                    <button class="btn btn-danger" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">🗑️ 删除</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="moment-item">
+                            <div class="moment-content">
+                                阅读《深入理解Java虚拟机》第三遍，每次读都有新的收获。GC 调优部分真的很实用。
+                            </div>
+                            <div class="moment-footer">
+                                <span>2024-11-12 09:25</span>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn btn-primary" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">✏️ 编辑</button>
+                                    <button class="btn btn-danger" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">🗑️ 删除</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="moment-item">
+                            <div class="moment-content">
+                                Docker 容器化部署踩了不少坑，但最终把整个项目都跑起来了。感觉对微服务架构理解更深了。
+                            </div>
+                            <div class="moment-footer">
+                                <span>2024-11-11 16:40</span>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn btn-primary" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">✏️ 编辑</button>
+                                    <button class="btn btn-danger" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">🗑️ 删除</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="moment-item">
+                            <div class="moment-content">
+                                完成了 Kafka 消费者组的实现，终于搞明白了 rebalance 机制。分布式系统真的很有意思！
+                            </div>
+                            <div class="moment-footer">
+                                <span>2024-11-10 11:30</span>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn btn-primary" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">✏️ 编辑</button>
+                                    <button class="btn btn-danger" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">🗑️ 删除</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="moment-item">
+                            <div class="moment-content">
+                                MySQL 索引优化小技巧：避免在 WHERE 子句中对字段进行函数操作，会导致索引失效。
+                            </div>
+                            <div class="moment-footer">
+                                <span>2024-11-09 15:10</span>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn btn-primary" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">✏️ 编辑</button>
+                                    <button class="btn btn-danger" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">🗑️ 删除</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="moment-item">
+                            <div class="moment-content">
+                                今天写了一个线程池监控工具，可以实时查看线程池的状态。对线程池参数调优有了更直观的认识。
+                            </div>
+                            <div class="moment-footer">
+                                <span>2024-11-08 13:45</span>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn btn-primary" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">✏️ 编辑</button>
+                                    <button class="btn btn-danger" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">🗑️ 删除</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="moment-item">
+                            <div class="moment-content">
+                                Spring Boot 自动装配原理真的很巧妙，通过 SPI 机制实现的可插拔设计值得学习。
+                            </div>
+                            <div class="moment-footer">
+                                <span>2024-11-07 10:20</span>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn btn-primary" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">✏️ 编辑</button>
+                                    <button class="btn btn-danger" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">🗑️ 删除</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 分页组件 -->
+                    <div class="pagination">
+                        <button onclick="changePage('moments', 'prev')" id="momentsPrevBtn">上一页</button>
+                        <span class="page-info">第 <span id="momentsCurrentPage">1</span> 页，共 <span id="momentsTotalPages">9</span> 页</span>
+                        <button onclick="changePage('moments', 'next')" id="momentsNextBtn">下一页</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 账号绑定 -->
+        <div class="content-section" id="accounts">
+            <div class="page-header">
+                <h1 class="page-title">第三方账号绑定</h1>
+                <p class="page-subtitle">管理登录方式和账号关联</p>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">邮箱绑定</h2>
+                <div class="account-card" style="margin-bottom: 1rem;">
+                    <div class="account-icon" style="background: #e74c3c;">
+                        <span>✉️</span>
+                    </div>
+                    <div class="account-info">
+                        <div class="account-name">邮箱</div>
+                        <div class="account-status connected">✓ 已绑定: penn@example.com</div>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button class="btn btn-warning" style="padding: 0.5rem 1rem;">🔄 换绑</button>
+                        <button class="btn btn-danger" style="padding: 0.5rem 1rem;">❌ 解绑</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">社交账号</h2>
+                <div class="account-grid">
+                    <div class="account-card">
+                        <div class="account-icon github">
+                            <span>🐙</span>
+                        </div>
+                        <div class="account-info">
+                            <div class="account-name">GitHub</div>
+                            <div class="account-status connected">✓ 已绑定: penn_dev</div>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-warning" style="padding: 0.5rem 1rem;">🔄 换绑</button>
+                            <button class="btn btn-danger" style="padding: 0.5rem 1rem;">❌ 解绑</button>
+                        </div>
+                    </div>
+
+                    <div class="account-card">
+                        <div class="account-icon google">
+                            <span>G</span>
+                        </div>
+                        <div class="account-info">
+                            <div class="account-name">Google</div>
+                            <div class="account-status">未绑定</div>
+                        </div>
+                        <button class="btn btn-primary" style="padding: 0.5rem 1rem;">🔗 绑定</button>
+                    </div>
+
+                    <div class="account-card">
+                        <div class="account-icon wechat">
+                            <span>💬</span>
+                        </div>
+                        <div class="account-info">
+                            <div class="account-name">微信</div>
+                            <div class="account-status">未绑定</div>
+                        </div>
+                        <button class="btn btn-primary" style="padding: 0.5rem 1rem;">🔗 绑定</button>
+                    </div>
+
+                    <div class="account-card">
+                        <div class="account-icon qq">
+                            <span>🐧</span>
+                        </div>
+                        <div class="account-info">
+                            <div class="account-name">QQ</div>
+                            <div class="account-status">未绑定</div>
+                        </div>
+                        <button class="btn btn-primary" style="padding: 0.5rem 1rem;">🔗 绑定</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">登录安全</h2>
+                <div class="form-group">
+                    <label class="form-label">修改密码</label>
+                    <input type="password" class="form-input" placeholder="当前密码">
+                </div>
+                <div class="form-group">
+                    <input type="password" class="form-input" placeholder="新密码">
+                </div>
+                <div class="form-group">
+                    <input type="password" class="form-input" placeholder="确认新密码">
+                </div>
+                <button class="btn btn-primary">更新密码</button>
+            </div>
+        </div>
+
+        <!-- 推荐管理 -->
+        <div class="content-section" id="recommend">
+            <div class="page-header">
+                <h1 class="page-title">推荐内容管理</h1>
+                <p class="page-subtitle">管理动漫、电影和书单推荐</p>
+            </div>
+
+            <!-- Tab切换 -->
+            <div class="tabs">
+                <div class="tab-item active" data-tab="anime-tab">🎌 动漫</div>
+                <div class="tab-item" data-tab="movie-tab">🎬 电影</div>
+                <div class="tab-item" data-tab="book-tab">📚 书单</div>
+            </div>
+
+            <!-- 动漫管理 -->
+            <div class="tab-content active" id="anime-tab">
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <button class="btn btn-primary" onclick="showAddRecommendForm('anime')">➕ 添加动漫</button>
+                        <input type="text" class="form-input" placeholder="🔍 搜索动漫..." style="width: 300px;">
+                    </div>
+
+                    <div id="animeList">
+                        <div class="recommend-item">
+                            <div class="recommend-cover">封面图</div>
+                            <div class="recommend-info">
+                                <div class="recommend-title">进击的巨人</div>
+                                <div class="recommend-meta">类型: 热血、悬疑 | 评分: 9.8</div>
+                                <div class="recommend-desc">
+                                    宏大的世界观设定，扣人心弦的剧情发展，每一集都充满惊喜。对人性、自由和命运的深刻探讨让人印象深刻。
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn btn-primary" style="padding: 0.4rem 1rem; font-size: 0.85rem;">✏️ 编辑</button>
+                                    <button class="btn btn-danger" style="padding: 0.4rem 1rem; font-size: 0.85rem;">🗑️ 删除</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="recommend-item">
+                            <div class="recommend-cover">封面图</div>
+                            <div class="recommend-info">
+                                <div class="recommend-title">紫罗兰永恒花园</div>
+                                <div class="recommend-meta">类型: 治愈、成长 | 评分: 9.5</div>
+                                <div class="recommend-desc">
+                                    京阿尼的神作，画面美到窒息。讲述了一个不懂"爱"的少女通过代笔工作逐渐理解爱的故事，催泪又温暖。
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn btn-primary" style="padding: 0.4rem 1rem; font-size: 0.85rem;">✏️ 编辑</button>
+                                    <button class="btn btn-danger" style="padding: 0.4rem 1rem; font-size: 0.85rem;">🗑️ 删除</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 电影管理 -->
+            <div class="tab-content" id="movie-tab">
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <button class="btn btn-primary" onclick="showAddRecommendForm('movie')">➕ 添加电影</button>
+                        <input type="text" class="form-input" placeholder="🔍 搜索电影..." style="width: 300px;">
+                    </div>
+
+                    <div id="movieList">
+                        <div class="recommend-item">
+                            <div class="recommend-cover">海报</div>
+                            <div class="recommend-info">
+                                <div class="recommend-title">肖申克的救赎</div>
+                                <div class="recommend-meta">导演: 弗兰克·德拉邦特 | 年份: 1994 | 评分: 9.7</div>
+                                <div class="recommend-desc">
+                                    关于希望、自由和救赎的经典之作。影片对人性的刻画和对希望的诠释让人深受触动，百看不厌。
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn btn-primary" style="padding: 0.4rem 1rem; font-size: 0.85rem;">✏️ 编辑</button>
+                                    <button class="btn btn-danger" style="padding: 0.4rem 1rem; font-size: 0.85rem;">🗑️ 删除</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="recommend-item">
+                            <div class="recommend-cover">海报</div>
+                            <div class="recommend-info">
+                                <div class="recommend-title">星际穿越</div>
+                                <div class="recommend-meta">导演: 克里斯托弗·诺兰 | 年份: 2014 | 评分: 9.3</div>
+                                <div class="recommend-desc">
+                                    诺兰的科幻史诗，融合了物理学、情感和哲学思考。时间膨胀、虫洞、黑洞等概念的视觉化令人惊叹。
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn btn-primary" style="padding: 0.4rem 1rem; font-size: 0.85rem;">✏️ 编辑</button>
+                                    <button class="btn btn-danger" style="padding: 0.4rem 1rem; font-size: 0.85rem;">🗑️ 删除</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 书单管理 -->
+            <div class="tab-content" id="book-tab">
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <button class="btn btn-primary" onclick="showAddRecommendForm('book')">➕ 添加书籍</button>
+                        <input type="text" class="form-input" placeholder="🔍 搜索书籍..." style="width: 300px;">
+                    </div>
+
+                    <div id="bookList">
+                        <div class="recommend-item">
+                            <div class="recommend-cover">封面</div>
+                            <div class="recommend-info">
+                                <div class="recommend-title">深入理解Java虚拟机（第3版）</div>
+                                <div class="recommend-meta">作者: 周志明 | 出版: 2019 | 评分: 9.5</div>
+                                <div class="recommend-desc">
+                                    Java 开发者必读经典，深入讲解 JVM 原理、垃圾回收、性能调优等核心知识。理论与实践结合，受益匪浅。
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn btn-primary" style="padding: 0.4rem 1rem; font-size: 0.85rem;">✏️ 编辑</button>
+                                    <button class="btn btn-danger" style="padding: 0.4rem 1rem; font-size: 0.85rem;">🗑️ 删除</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="recommend-item">
+                            <div class="recommend-cover">封面</div>
+                            <div class="recommend-info">
+                                <div class="recommend-title">设计数据密集型应用</div>
+                                <div class="recommend-meta">作者: Martin Kleppmann | 出版: 2017 | 评分: 9.7</div>
+                                <div class="recommend-desc">
+                                    分布式系统领域的经典著作，深入讲解数据存储、分布式一致性、流处理等核心概念。对理解现代架构非常有帮助。
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn btn-primary" style="padding: 0.4rem 1rem; font-size: 0.85rem;">✏️ 编辑</button>
+                                    <button class="btn btn-danger" style="padding: 0.4rem 1rem; font-size: 0.85rem;">🗑️ 删除</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 待办编辑 -->
+        <div class="content-section" id="todo">
+            <div class="page-header">
+                <h1 class="page-title">待办事项编辑</h1>
+                <p class="page-subtitle">管理网站待办页面的展示内容</p>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">待办列表配置</h2>
+                <form>
+                    <div class="form-group">
+                        <label class="form-label">待办内容（JSON格式）</label>
+                        <textarea class="form-input" style="min-height: 300px; font-family: 'Consolas', monospace;" placeholder='[
+  {
+    "id": 1,
+    "title": "完成毕业设计开题报告",
+    "status": "进行中",
+    "priority": "高",
+    "deadline": "2024-12-01"
+  },
+  {
+    "id": 2,
+    "title": "学习 Kubernetes 部署",
+    "status": "待开始",
+    "priority": "中",
+    "deadline": "2024-12-15"
+  }
+]'></textarea>
+                    </div>
+                    <button type="button" class="btn btn-primary">💾 保存配置</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">预览效果</h2>
+                <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 6px;">
+                    <div style="margin-bottom: 1rem; padding: 1rem; background: white; border-left: 4px solid #f39c12; border-radius: 4px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h4 style="color: #2c3e50; margin-bottom: 0.3rem;">完成毕业设计开题报告</h4>
+                                <div style="color: #7f8c8d; font-size: 0.85rem;">截止日期: 2024-12-01</div>
+                            </div>
+                            <div>
+                                <span class="status-badge" style="background: #fff3cd; color: #856404;">进行中</span>
+                                <span class="status-badge" style="background: #f8d7da; color: #721c24; margin-left: 0.5rem;">高优先级</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="padding: 1rem; background: white; border-left: 4px solid #95a5a6; border-radius: 4px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h4 style="color: #2c3e50; margin-bottom: 0.3rem;">学习 Kubernetes 部署</h4>
+                                <div style="color: #7f8c8d; font-size: 0.85rem;">截止日期: 2024-12-15</div>
+                            </div>
+                            <div>
+                                <span class="status-badge" style="background: #e2e3e5; color: #383d41;">待开始</span>
+                                <span class="status-badge" style="background: #d1ecf1; color: #0c5460; margin-left: 0.5rem;">中优先级</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 关于编辑 -->
+        <div class="content-section" id="about">
+            <div class="page-header">
+                <h1 class="page-title">关于页面编辑</h1>
+                <p class="page-subtitle">编辑个人简介和关于页面内容</p>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">基本信息</h2>
+                <form>
+                    <div class="form-group">
+                        <label class="form-label">姓名/昵称</label>
+                        <input type="text" class="form-input" value="Penn" placeholder="请输入姓名或昵称">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">职业/身份</label>
+                        <input type="text" class="form-input" value="Java 后端开发 | 计算机科学在读" placeholder="请输入职业或身份">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">个人简介</label>
+                        <textarea class="form-input" style="min-height: 150px;" placeholder="介绍一下你自己...">热爱技术的 Java 后端开发者，专注于分布式系统、数据库和高性能缓存等领域。喜欢探索底层原理，追求代码质量和系统可靠性。
+
+平时喜欢阅读技术书籍，写写博客记录学习心得。相信技术能改变世界，也享受解决问题带来的成就感。</textarea>
+                    </div>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">技能标签</h2>
+                <form>
+                    <div class="form-group">
+                        <label class="form-label">技术栈</label>
+                        <input type="text" class="form-input" placeholder="输入技能后按回车添加" id="skillInput">
+                        <div class="tags-container" id="skillTags" style="margin-top: 1rem;">
+                            <span class="tag-item">Java <span class="tag-remove" onclick="removeTag(this)">×</span></span>
+                            <span class="tag-item">Spring Boot <span class="tag-remove" onclick="removeTag(this)">×</span></span>
+                            <span class="tag-item">MySQL <span class="tag-remove" onclick="removeTag(this)">×</span></span>
+                            <span class="tag-item">Redis <span class="tag-remove" onclick="removeTag(this)">×</span></span>
+                            <span class="tag-item">Kafka <span class="tag-remove" onclick="removeTag(this)">×</span></span>
+                            <span class="tag-item">Docker <span class="tag-remove" onclick="removeTag(this)">×</span></span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">联系方式</h2>
+                <form>
+                    <div class="form-group">
+                        <label class="form-label">邮箱</label>
+                        <input type="email" class="form-input" placeholder="your@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">GitHub</label>
+                        <input type="text" class="form-input" placeholder="https://github.com/username">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">个人网站</label>
+                        <input type="text" class="form-input" placeholder="https://yoursite.com">
+                    </div>
+                    <button type="button" class="btn btn-primary">💾 保存更新</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- IP管理 -->
+        <div class="content-section" id="ip">
+            <div class="page-header">
+                <h1 class="page-title">IP访问管理</h1>
+                <p class="page-subtitle">监测访问IP并管理黑白名单</p>
+            </div>
+
+            <!-- Tab切换 -->
+            <div class="tabs">
+                <div class="tab-item active" data-tab="ip-list">📋 访问记录</div>
+                <div class="tab-item" data-tab="whitelist">✅ 白名单</div>
+                <div class="tab-item" data-tab="blacklist">⛔ 黑名单</div>
+            </div>
+
+            <!-- 访问记录 -->
+            <div class="tab-content active" id="ip-list">
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <div style="display: flex; gap: 1rem;">
+                            <select class="form-input" style="width: 150px;">
+                                <option>今天</option>
+                                <option>最近7天</option>
+                                <option>最近30天</option>
+                            </select>
+                        </div>
+                        <input type="text" class="form-input" placeholder="🔍 搜索IP地址..." style="width: 250px;">
+                    </div>
+
+                    <div id="ipRecordList">
+                        <div class="ip-item">
+                            <div class="ip-info">
+                                <div class="ip-address">192.168.1.100</div>
+                                <div class="ip-location">📍 中国-广东-深圳</div>
+                                <div style="color: #7f8c8d; font-size: 0.85rem;">访问次数: 45 | 最后访问: 2024-11-16 15:30</div>
+                            </div>
+                            <div class="ip-actions">
+                                <button class="btn btn-success" style="padding: 0.5rem 1rem; font-size: 0.85rem;">加入白名单</button>
+                                <button class="btn btn-danger" style="padding: 0.5rem 1rem; font-size: 0.85rem;">加入黑名单</button>
+                            </div>
+                        </div>
+
+                        <div class="ip-item">
+                            <div class="ip-info">
+                                <div class="ip-address">106.52.123.45</div>
+                                <div class="ip-location">📍 中国-北京-北京</div>
+                                <div style="color: #7f8c8d; font-size: 0.85rem;">访问次数: 23 | 最后访问: 2024-11-16 14:15</div>
+                            </div>
+                            <div class="ip-actions">
+                                <button class="btn btn-success" style="padding: 0.5rem 1rem; font-size: 0.85rem;">加入白名单</button>
+                                <button class="btn btn-danger" style="padding: 0.5rem 1rem; font-size: 0.85rem;">加入黑名单</button>
+                            </div>
+                        </div>
+
+                        <div class="ip-item">
+                            <div class="ip-info">
+                                <div class="ip-address">220.181.38.148</div>
+                                <div class="ip-location">📍 中国-上海-上海</div>
+                                <div style="color: #7f8c8d; font-size: 0.85rem;">访问次数: 8 | 最后访问: 2024-11-16 12:45</div>
+                            </div>
+                            <div class="ip-actions">
+                                <button class="btn btn-success" style="padding: 0.5rem 1rem; font-size: 0.85rem;">加入白名单</button>
+                                <button class="btn btn-danger" style="padding: 0.5rem 1rem; font-size: 0.85rem;">加入黑名单</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pagination">
+                        <button onclick="changePage('ip', 'prev')">上一页</button>
+                        <span class="page-info">第 1 页，共 5 页</span>
+                        <button onclick="changePage('ip', 'next')">下一页</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 白名单 -->
+            <div class="tab-content" id="whitelist">
+                <div class="card">
+                    <div style="margin-bottom: 1.5rem;">
+                        <button class="btn btn-primary" onclick="showAddIPForm('white')">➕ 添加白名单</button>
+                    </div>
+
+                    <div>
+                        <div class="ip-item">
+                            <div class="ip-info">
+                                <div class="ip-address">127.0.0.1</div>
+                                <div style="color: #7f8c8d; font-size: 0.85rem;">本地调试地址 | 添加时间: 2024-11-01</div>
+                            </div>
+                            <div class="ip-actions">
+                                <button class="btn btn-danger" style="padding: 0.5rem 1rem; font-size: 0.85rem;">移除</button>
+                            </div>
+                        </div>
+
+                        <div class="ip-item">
+                            <div class="ip-info">
+                                <div class="ip-address">192.168.1.0/24</div>
+                                <div style="color: #7f8c8d; font-size: 0.85rem;">内网IP段 | 添加时间: 2024-11-01</div>
+                            </div>
+                            <div class="ip-actions">
+                                <button class="btn btn-danger" style="padding: 0.5rem 1rem; font-size: 0.85rem;">移除</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 黑名单 -->
+            <div class="tab-content" id="blacklist">
+                <div class="card">
+                    <div style="margin-bottom: 1.5rem;">
+                        <button class="btn btn-primary" onclick="showAddIPForm('black')">➕ 添加黑名单</button>
+                    </div>
+
+                    <div>
+                        <div class="ip-item">
+                            <div class="ip-info">
+                                <div class="ip-address">123.123.123.123</div>
+                                <div style="color: #7f8c8d; font-size: 0.85rem;">恶意访问 | 添加时间: 2024-11-15 | 原因: 频繁攻击</div>
+                            </div>
+                            <div class="ip-actions">
+                                <button class="btn btn-success" style="padding: 0.5rem 1rem; font-size: 0.85rem;">移除</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 侧边栏菜单切换
+    document.querySelectorAll('.menu-item').forEach(item => {
+        item.addEventListener('click', function() {
+            // 移除所有活动状态
+            document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+
+            // 添加当前活动状态
+            this.classList.add('active');
+            const section = this.getAttribute('data-section');
+            document.getElementById(section).classList.add('active');
+        });
+    });
+
+    // Tab切换功能
+    document.querySelectorAll('.tab-item').forEach(tab => {
+        tab.addEventListener('click', function() {
+            const parent = this.closest('.content-section');
+            const targetTab = this.getAttribute('data-tab');
+
+            // 移除同一父容器下的所有活动状态
+            parent.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+            parent.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+            // 添加当前活动状态
+            this.classList.add('active');
+            document.getElementById(targetTab).classList.add('active');
+        });
+    });
+
+    // 文件上传区域
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('fileInput');
+    const uploadSuccess = document.getElementById('uploadSuccess');
+
+    uploadArea.addEventListener('click', () => fileInput.click());
+
+    uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.classList.add('dragover');
+    });
+
+    uploadArea.addEventListener('dragleave', () => {
+        uploadArea.classList.remove('dragover');
+    });
+
+    uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+        const files = e.dataTransfer.files;
+        handleFiles(files);
+    });
+
+    fileInput.addEventListener('change', (e) => {
+        handleFiles(e.target.files);
+    });
+
+    function handleFiles(files) {
+        if (files.length > 0) {
+            const file = files[0];
+            if (file.name.endsWith('.md') || file.name.endsWith('.markdown')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // 显示上传成功提示
+                    document.getElementById('uploadedFileName').textContent = file.name;
+                    document.getElementById('uploadedFileSize').textContent = (file.size / 1024).toFixed(2) + ' KB';
+                    uploadSuccess.classList.add('show');
+
+                    // 3秒后自动隐藏提示
+                    setTimeout(() => {
+                        uploadSuccess.classList.remove('show');
+                    }, 5000);
+                };
+                reader.readAsText(file);
+            } else {
+                alert('请上传 .md 或 .markdown 格式的文件');
+            }
+        }
+    }
+
+    // 分页功能
+    const pageState = {
+        articles: { current: 1, total: 13 },
+        moments: { current: 1, total: 9 },
+        ip: { current: 1, total: 5 }
+    };
+
+    function changePage(section, direction) {
+        const state = pageState[section];
+        if (!state) return;
+
+        if (direction === 'prev' && state.current > 1) {
+            state.current--;
+        } else if (direction === 'next' && state.current < state.total) {
+            state.current++;
+        }
+
+        // 更新页面显示
+        document.getElementById(`${section}CurrentPage`).textContent = state.current;
+
+        // 更新按钮状态
+        const prevBtn = document.getElementById(`${section}PrevBtn`);
+        const nextBtn = document.getElementById(`${section}NextBtn`);
+
+        if (prevBtn) {
+            prevBtn.disabled = state.current === 1;
+        }
+        if (nextBtn) {
+            nextBtn.disabled = state.current === state.total;
+        }
+
+        // 这里应该调用后端API加载对应页的数据
+        console.log(`加载 ${section} 第 ${state.current} 页数据`);
+    }
+
+    // 初始化分页按钮状态
+    window.addEventListener('DOMContentLoaded', () => {
+        Object.keys(pageState).forEach(section => {
+            const prevBtn = document.getElementById(`${section}PrevBtn`);
+            const nextBtn = document.getElementById(`${section}NextBtn`);
+
+            if (prevBtn) {
+                prevBtn.disabled = pageState[section].current === 1;
+            }
+            if (nextBtn) {
+                nextBtn.disabled = pageState[section].current === pageState[section].total;
+            }
+        });
+    });
+
+    // 发布文章
+    function publishArticle() {
+        const fileName = document.getElementById('uploadedFileName')?.textContent;
+        if (!fileName) {
+            alert('请先上传 Markdown 文件');
+            return;
+        }
+        alert('文章发布成功！\n文件: ' + fileName);
+        // 实际应用中这里会调用后端API
+        uploadSuccess.classList.remove('show');
+    }
+
+    // 保存草稿
+    function saveDraft() {
+        const fileName = document.getElementById('uploadedFileName')?.textContent;
+        if (!fileName) {
+            alert('请先上传 Markdown 文件');
+            return;
+        }
+        alert('草稿保存成功！\n文件: ' + fileName);
+        // 实际应用中这里会调用后端API
+    }
+
+    // 发布瞬间
+    function publishMoment() {
+        const content = document.getElementById('momentContent').value;
+        if (!content.trim()) {
+            alert('请输入瞬间内容');
+            return;
+        }
+        alert('瞬间发布成功！');
+        document.getElementById('momentContent').value = '';
+        // 实际应用中这里会调用后端API并刷新列表
+    }
+
+    // 标签管理
+    const skillInput = document.getElementById('skillInput');
+    if (skillInput) {
+        skillInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const value = this.value.trim();
+                if (value) {
+                    addTag(value);
+                    this.value = '';
+                }
+            }
+        });
+    }
+
+    function addTag(text) {
+        const skillTags = document.getElementById('skillTags');
+        const tag = document.createElement('span');
+        tag.className = 'tag-item';
+        tag.innerHTML = `${text} <span class="tag-remove" onclick="removeTag(this)">×</span>`;
+        skillTags.appendChild(tag);
+    }
+
+    function removeTag(element) {
+        element.parentElement.remove();
+    }
+
+    // 显示添加推荐表单
+    function showAddRecommendForm(type) {
+        const typeName = {
+            'anime': '动漫',
+            'movie': '电影',
+            'book': '书籍'
+        }[type];
+        alert(`打开添加${typeName}的表单\n\n实际应用中这里会显示一个模态框，包含:\n- 标题\n- 封面图\n- 类型/导演/作者\n- 评分\n- 简介`);
+    }
+
+    // 显示添加IP表单
+    function showAddIPForm(listType) {
+        const listName = listType === 'white' ? '白名单' : '黑名单';
+        alert(`打开添加IP到${listName}的表单\n\n实际应用中这里会显示一个模态框，包含:\n- IP地址\n- 备注说明`);
+    }
+
+    // 模拟数据加载
+    console.log('后台管理系统初始化完成');
+    console.log('提示: 实际使用时需要对接后端API');
+</script>
+</body>
+</html>

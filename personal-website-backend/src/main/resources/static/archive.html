@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>归档 - Penn 的生活日报</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="newspaper">
+    <nav class="navigation-bar">
+        <ul>
+            <li><a href="home.html">首页</a></li>
+            <li><a href="essay.html">杂谈</a></li>
+            <li><a href="moment.html">瞬间</a></li>
+            <li><a href="tech.html">技术</a></li>
+            <li><a href="recommend.html">推荐</a></li>
+            <li><a href="todolist.html">待办</a></li>
+            <li><a href="category.html">分类</a></li>
+            <li><a href="tags.html">标签</a></li>
+            <li><a href="search.html">搜索</a></li>
+            <li><a class="active" href="archive.html">归档</a></li>
+            <li><a href="about.html">关于</a></li>
+        </ul>
+    </nav>
+    <header class="masthead">
+        <h1>文章归档</h1>
+        <div class="tagline">按时间倒序浏览所有内容</div>
+    </header>
+
+    <section class="archive-list" id="archive-list"></section>
+    <div class="pager-bar" id="pager"></div>
+
+    <footer class="footer">
+        <p>Penn 的生活日报 | 后端与生活的日常记录</p>
+        <p>blog@penn.dev · 每周五更新</p>
+        <div class="social-links">
+            <a href="https://github.com" target="_blank" aria-label="GitHub">
+                <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                    <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+                </svg>
+            </a>
+            <a href="https://discord.com" target="_blank" aria-label="Discord">
+                <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                    <path d="M13.545 2.907a13.227 13.227 0 0 0-3.257-1.011.05.05 0 0 0-.052.025c-.141.25-.297.577-.406.833a12.19 12.19 0 0 0-3.658 0 8.258 8.258 0 0 0-.412-.833.051.051 0 0 0-.052-.025c-1.125.194-2.22.534-3.257 1.011a.041.041 0 0 0-.021.018C.356 6.024-.213 9.047.066 12.032c.001.014.01.028.021.037a13.276 13.276 0 0 0 3.995 2.02.05.05 0 0 0 .056-.019c.308-.42.582-.863.818-1.329a.05.05 0 0 0-.01-.059.051.051 0 0 0-.018-.011 8.875 8.875 0 0 1-1.248-.595.05.05 0 0 1-.02-.066.051.051 0 0 1 .015-.019c.084-.063.168-.129.248-.195a.05.05 0 0 1 .051-.007c2.619 1.196 5.454 1.196 8.041 0a.052.052 0 0 1 .053.007c.08.066.164.132.248.195a.051.051 0 0 1-.004.085 8.254 8.254 0 0 1-1.249.594.05.05 0 0 0-.03.03.052.052 0 0 0 .003.041c.24.465.515.909.817 1.329a.05.05 0 0 0 .056.019 13.235 13.235 0 0 0 4.001-2.02.049.049 0 0 0 .021-.037c.334-3.451-.559-6.449-2.366-9.106a.034.034 0 0 0-.02-.019Zm-8.198 7.307c-.789 0-1.438-.724-1.438-1.612 0-.889.637-1.613 1.438-1.613.807 0 1.45.73 1.438 1.613 0 .888-.631 1.612-1.438 1.612Zm5.316 0c-.788 0-1.438-.724-1.438-1.612 0-.889.637-1.613 1.438-1.613.807 0 1.451.73 1.438 1.613 0 .888-.631 1.612-1.438 1.612Z"/>
+                </svg>
+            </a>
+            <a href="mailto:contact@penn.dev" aria-label="Email">
+                <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                    <path d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414.05 3.555ZM0 4.697v7.104l5.803-3.558L0 4.697ZM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586l-1.239-.757Zm3.436-.586L16 11.801V4.697l-5.803 3.546Z"/>
+                </svg>
+            </a>
+        </div>
+    </footer>
+</div>
+
+<script>
+    const per = 10;
+    const posts = [
+        { title: '深入学习 Java 后端的一周总结', date: '2024-11-15', category: '技术', link: 'article.html' },
+        { title: '周末的咖啡时光', date: '2024-11-14', category: '杂谈', link: 'article.html' },
+        { title: 'Bug 终于解决了', date: '2024-11-14', category: '瞬间', link: 'article.html' },
+        { title: '读《黑客与画家》有感', date: '2024-11-13', category: '杂谈', link: 'article.html' },
+        { title: 'MySQL 索引优化实践', date: '2024-11-12', category: '技术', link: 'article.html' },
+        { title: '容器化之路：Docker 初体验', date: '2024-11-10', category: '技术', link: 'article.html' },
+        { title: '秋天的第一杯咖啡', date: '2024-11-05', category: '瞬间', link: 'article.html' },
+        { title: 'Kafka 消息队列实战总结', date: '2024-10-28', category: '技术', link: 'article.html' },
+        { title: '十月的读书清单', date: '2024-10-20', category: '杂谈', link: 'article.html' },
+        { title: 'Spring Boot 自动配置原理解析', date: '2024-10-15', category: '技术', link: 'article.html' },
+        { title: '分布式事务解决方案对比', date: '2024-09-25', category: '技术', link: 'article.html' },
+        { title: '2023 年度总结', date: '2023-12-28', category: '杂谈', link: 'article.html' },
+        { title: '年度阅读清单', date: '2023-12-15', category: '杂谈', link: 'article.html' }
+    ].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    let page = 1;
+    const listEl = document.getElementById('archive-list');
+    const pager = document.getElementById('pager');
+
+    function render() {
+        listEl.innerHTML = '';
+        const total = Math.max(1, Math.ceil(posts.length / per));
+        const start = (page - 1) * per;
+        let prevYear = null;
+        let prevMonth = null;
+        posts.slice(start, start + per).forEach(p => {
+            const d = new Date(p.date);
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            const showYear = year !== prevYear;
+            const showMonth = showYear || month !== prevMonth;
+            prevYear = year;
+            prevMonth = month;
+            const item = document.createElement('div');
+            item.className = 'archive-item';
+            item.innerHTML = `
+                ${showYear ? `<div class="year">${year}年</div>` : ''}
+                ${showMonth ? `<div class="month">${month}月</div>` : ''}
+                <div class="day-title">${day}日 · ${p.category} · ${p.title}<span style="float:right;"><a class="read-more" href="${p.link}">查看 →</a></span></div>
+            `;
+            listEl.appendChild(item);
+        });
+        renderPager(total);
+    }
+
+    function goto(p) {
+        const total = Math.max(1, Math.ceil(posts.length / per));
+        page = Math.min(Math.max(1, p), total);
+        render();
+    }
+
+    function renderPager(total) {
+        pager.innerHTML = '';
+        const links = [];
+        const push = (label, p, active=false) => {
+            const el = document.createElement('span');
+            el.className = 'pager-link' + (active ? ' active' : '');
+            el.textContent = label;
+            if (!active && p) el.onclick = () => goto(p);
+            links.push(el);
+        };
+        if (page > 1) push('上一页', page-1);
+        push('1', 1, page===1);
+        if (total >= 2) push('2', 2, page===2);
+        if (page > 3) push('...', null);
+        if (page > 2 && page < total-1) push(String(page), page, true);
+        if (total > 2) push(String(total), total, page===total);
+        if (page < total) push('下一页', page+1);
+        links.forEach(el => pager.appendChild(el));
+    }
+
+    render();
+</script>
+</body>
+</html>
